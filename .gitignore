@@ -1,3 +1,5 @@
 *
 !.gitignore
-!alacritty/*
+!alacritty/
+!alacritty/catppuccin
+!nvim
