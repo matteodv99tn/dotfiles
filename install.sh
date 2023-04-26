@@ -75,6 +75,7 @@ List of available commands:
     --update
     --upgrade
     --base 
+    --alacritty
     --neovim
     --qtile
 EOF
@@ -85,6 +86,7 @@ fi
 get_updates=false
 install_upgrades=false
 install_base_packages=false
+install_alacritty=false
 install_neovim=false
 install_qtile=false
 
@@ -93,6 +95,7 @@ if is_in_list "default" $@; then # default installation
     install_upgrades=true
     install_base_packages=true
     install_neovim=true
+    install_alacritty=true
 fi
 
 if is_in_list "--update" $@; then # updates
@@ -106,6 +109,10 @@ fi
 
 if is_in_list "--base" $@; then # base packages
     install_base_packages=true
+fi
+
+if is_in_list "--alacritty" $@; then # alacritty
+    install_alacritty=true
 fi
 
 if is_in_list "--neovim" $@; then # neovim
@@ -130,9 +137,25 @@ fi
 if $install_base_packages; then # base packages
     info "Installing base packages"
     sudo apt install -y \
-        curl \
-        git \
-        ripgrep
+        curl grep ripgrep git python3
+fi
+
+if $install_alacritty; then # alacritty
+    info "Installing alacritty dependencies"
+    sudo apt install -y \
+        cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev \
+        python3 rustc cargo
+    orig_dir=$(pwd)
+    info "Building alacritty from source"
+    if is_git_repo $PACK_DIR/alacritty; then
+        cd $PACK_DIR/alacritty
+        git pull
+    else 
+        cd $PACK_DIR
+        git clone https://github.com/jwilm/alacritty.git
+        cd alacritty
+    fi
+    cargo build --release
 fi
 
 if $install_neovim; then
@@ -146,8 +169,8 @@ fi
 
 if $install_qtile; then
     info "Installing qtile from pip"
-    # pip3 install xcffib
-    # pip3 install qtile
+    pip3 install xcffib
+    pip3 install qtile
     info "Creating qtile.xsession file"
     sudo cat > /usr/share/xsessions/qtile.xsession << EOF
 [Desktop Entry]
