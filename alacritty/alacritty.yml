@@ -1,0 +1,19 @@
+env:
+  TERM: xterm-256color
+
+font:
+  normal:
+    family: JetBrains Mono
+    style: Regular
+
+window:
+  opacity: 0.8
+  dynamic_title: true
+  decorations_theme_variant: None
+
+  padding:
+    x: 3 
+    y: 3 
+
+import:
+  - ~/.config/alacritty/catppuccin/catppuccin-mocha.yml
