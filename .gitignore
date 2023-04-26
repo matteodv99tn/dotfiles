@@ -1,5 +1,7 @@
-*
+*/
 !.gitignore
 !alacritty/
 !alacritty/catppuccin
 !nvim
+!picom/
+!qtile/
