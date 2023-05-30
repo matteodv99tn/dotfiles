@@ -7,7 +7,7 @@ font:
     style: Regular
 
 window:
-  opacity: 0.8
+  opacity: 1
   dynamic_title: true
   decorations_theme_variant: None
 

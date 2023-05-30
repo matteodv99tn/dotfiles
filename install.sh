@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 ## --- Variables
-PACK_DIR=$HOME/pack_dir 
+PACK_DIR=$HOME/programs
 mkdir -p $PACK_DIR
 
 
@@ -75,9 +75,12 @@ List of available commands:
     --update
     --upgrade
     --base 
+    --fonts
     --alacritty
     --neovim
     --qtile
+    --picom
+    --xmonad
 EOF
 exit 1
 fi
@@ -86,14 +89,18 @@ fi
 get_updates=false
 install_upgrades=false
 install_base_packages=false
+install_fonts=false
 install_alacritty=false
 install_neovim=false
+install_picom=false
 install_qtile=false
+install_xmonad=false
 
 if is_in_list "default" $@; then # default installation
     get_updates=true
     install_upgrades=true
     install_base_packages=true
+    install_fonts=true
     install_neovim=true
     install_alacritty=true
 fi
@@ -111,6 +118,10 @@ if is_in_list "--base" $@; then # base packages
     install_base_packages=true
 fi
 
+if is_in_list "--fonts" $@; then # fonts packages
+    install_fonts=true
+fi
+
 if is_in_list "--alacritty" $@; then # alacritty
     install_alacritty=true
 fi
@@ -119,8 +130,18 @@ if is_in_list "--neovim" $@; then # neovim
     install_neovim=true
 fi
 
+if is_in_list "--picom" $@; then # picom
+    install_picom=true
+fi
+
 if is_in_list "--qtile" $@; then # qtile
+    install_picom=true
     install_qtile=true
+fi
+
+if is_in_list "--xmonad" $@; then # xmonad
+    install_picom=true
+    install_xmonad=true
 fi
 
 ## --- Installs -----------------------------------------------------------------------------------
@@ -137,7 +158,15 @@ fi
 if $install_base_packages; then # base packages
     info "Installing base packages"
     sudo apt install -y \
-        curl grep ripgrep git python3
+        curl grep ripgrep git python3 fuse g++ meson ninja-build
+    mkdir -p ~/.local/bin
+    echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.bashrc >> $HOME/.bashrc
+fi
+
+if $install_fonts; then # fonts
+    info "Installing fonts"
+    sudo apt install -y \
+        fonts-jetbrains-mono figlet
 fi
 
 if $install_alacritty; then # alacritty
@@ -155,16 +184,57 @@ if $install_alacritty; then # alacritty
         git clone https://github.com/jwilm/alacritty.git
         cd alacritty
     fi
+    pushd $PACK_DIR/alacritty
     cargo build --release
+    info "Adding Alacritty desktop entry"
+    sudo cp target/release/alacritty /usr/local/bin # or anywhere else in $PATH
+    sudo cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg
+    sudo desktop-file-install extra/linux/Alacritty.desktop
+    sudo update-desktop-database
+    popd
 fi
 
 if $install_neovim; then
     info "Installing neovim"
+    pushd ~/.local/bin
     echo "Downloading neovim..."
     curl -LOs https://github.com/neovim/neovim/releases/latest/download/nvim.appimage 
-    echo "Download finished"
-    mv nvim.appimage $HOME/.local/bin/nvim 
+    info "Install packer from git"
+    PACKER_DIR=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+    if is_git_repo $PACKER_DIR; then
+	cd $PACKER_DIR
+	git pull
+    else
+	git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_DIR
+    fi
+    chmod u+x nvim.appimage
+    mv $HOME/.local/bin/nvim.appimage $HOME/.local/bin/nvim 
     chmod u+x $HOME/.local/bin/nvim
+    popd
+fi
+
+if $install_picom; then
+    info "Installing picom dependencies (for qtile)"
+    sudo apt install -y \
+        libxext-dev libxcb1-dev libxcb-damage0-dev libxcb-xfixes0-dev libxcb-shape0-dev \
+        libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-composite0-dev \
+        libxcb-image0-dev libxcb-present-dev libxcb-xinerama0-dev libxcb-glx0-dev libpixman-1-dev \
+        libdbus-1-dev libconfig-dev libgl1-mesa-dev  libpcre2-dev  libevdev-dev uthash-dev \
+        libev-dev libx11-xcb-dev libpcre++-dev
+    info "Installing picom (for qtile)"
+    orig_dir=$(pwd)
+    if is_git_repo $PACK_DIR/picom; then
+        cd $PACK_DIR/picom
+        git pull
+    else 
+        cd $PACK_DIR
+        git clone https://github.com/jonaburg/picom
+        cd picom
+    fi
+    meson --buildtype=release . build
+    ninja -C build
+    sudo ninja -C build install
+    cd $orig_dir
 fi
 
 if $install_qtile; then
@@ -180,25 +250,13 @@ Exec=qtile start
 Type=Application
 Type=wm;tiling
 EOF
-    info "Installing picom dependencies (for qtile)"
+fi
+
+if $install_xmonad; then
+    info "Installing Xmonad"
     sudo apt install -y \
-        libxext-dev libxcb1-dev libxcb-damage0-dev libxcb-xfixes0-dev libxcb-shape0-dev \
-        libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-composite0-dev \
-        libxcb-image0-dev libxcb-present-dev libxcb-xinerama0-dev libxcb-glx0-dev libpixman-1-dev \
-        libdbus-1-dev libconfig-dev libgl1-mesa-dev  libpcre2-dev  libevdev-dev uthash-dev \
-        libev-dev libx11-xcb-dev
-    info "Installing picom (for qtile)"
-    orig_dir=$(pwd)
-    if is_git_repo $PACK_DIR/picom; then
-        cd $PACK_DIR/picom
-        git pull
-    else 
-        cd $PACK_DIR
-        git clone https://github.com/jonaburg/picom
-        cd picom
-    fi
-    meson --buildtype=release . build
-    ninja -C build
-    sudo ninja -C build install
-    cd $orig_dir
+        xmonad libghc-xmonad-contrib-dev xmobar dmenu
+    mkdir -p $HOME/.config/xmonad
+    ln -s $HOME/.config/xmonad $HOME/.xmonad
+    # touch $HOME/.config/xmonad/.xmonad.hs
 fi
