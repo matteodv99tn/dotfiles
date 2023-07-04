@@ -1,2 +1,4 @@
-include catppuccin-mocha
+include catppuccin-macchiato
 set recolor
+
+set selection-clipboard clipboard

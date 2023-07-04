@@ -3,7 +3,7 @@ env:
 
 font:
   normal:
-    family: JetBrains Mono
+    family: JetBrainsMono Nerd Font
     style: Regular
 
 window:
@@ -16,4 +16,4 @@ window:
     y: 3 
 
 import:
-  - ~/.config/alacritty/catppuccin/catppuccin-mocha.yml
+  - ~/.config/alacritty/catppuccin/catppuccin-macchiato.yml
