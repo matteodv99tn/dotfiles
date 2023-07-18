@@ -158,7 +158,9 @@ fi
 if $install_base_packages; then # base packages
     info "Installing base packages"
     sudo apt install -y \
-        curl grep ripgrep git python3 fuse g++ meson ninja-build
+        curl grep ripgrep git python3 fuse g++ meson ninja-build python3-pip \
+        build-essential libssl-dev libffi-dev python3-dev python3-venv \
+        python-is-python3 autoconf libtool pkg-config npm 
     mkdir -p ~/.local/bin
     echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.bashrc >> $HOME/.bashrc
 fi
@@ -166,7 +168,23 @@ fi
 if $install_fonts; then # fonts
     info "Installing fonts"
     sudo apt install -y \
-        fonts-jetbrains-mono figlet
+        figlet
+    FONTSDIR=$HOME/.local/share/fonts
+    mkdir -p $FONTSDIR
+    pushd $FONTSDIR
+    info "Downloading nerd-fonts"
+    echo "Installing RobotMono"
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/RobotoMono.zip 
+    echo "Installing Mononoki"
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Mononoki.zip 
+    echo "Installing JetBrains Mono"
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/JetBrainsMono.zip 
+    echo "Installing FiraCode"
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/FiraCode.zip 
+    unzip -n "*.zip"
+    rm *.zip
+    fc-cache -f -v
+    popd
 fi
 
 if $install_alacritty; then # alacritty
@@ -198,7 +216,7 @@ if $install_neovim; then
     info "Installing neovim"
     pushd ~/.local/bin
     echo "Downloading neovim..."
-    curl -LOs https://github.com/neovim/neovim/releases/latest/download/nvim.appimage 
+    curl -LOs https://github.com/neovim/neovim/releases/v3.0.1/download/nvim.appimage 
     info "Install packer from git"
     PACKER_DIR=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
     if is_git_repo $PACKER_DIR; then
@@ -228,7 +246,8 @@ if $install_picom; then
         git pull
     else 
         cd $PACK_DIR
-        git clone https://github.com/jonaburg/picom
+        # git clone https://github.com/jonaburg/picom
+        git clone https://github.com/pijulius/picom
         cd picom
     fi
     meson --buildtype=release . build
@@ -254,9 +273,18 @@ fi
 
 if $install_xmonad; then
     info "Installing Xmonad"
+    # sudo apt install -y \
+    #     xmonad libghc-xmonad-contrib-dev xmobar dmenu feh
+    # mkdir -p $HOME/.config/xmonad
+    # ln -s $HOME/.config/xmonad $HOME/.xmonad
     sudo apt install -y \
-        xmonad libghc-xmonad-contrib-dev xmobar dmenu
+        git libx11-dev libxft-dev libxinerama-dev libxrandr-dev libxss-dev \
+        haskell-stack
     mkdir -p $HOME/.config/xmonad
-    ln -s $HOME/.config/xmonad $HOME/.xmonad
-    # touch $HOME/.config/xmonad/.xmonad.hs
+    pushd $HOME/.config/xmonad
+    git clone https://github.com/xmonad/xmonad
+    git clone https://github.com/xmonad/xmonad-contrib 
+    stack init
+    stack install
+    popd
 fi
