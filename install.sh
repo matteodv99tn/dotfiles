@@ -13,7 +13,7 @@ mkdir -p $PACK_DIR
 #   then all the URLs of the files to download
 # Files will be saved with the original name.
 download_contents(){
-    DOWNLOAD_DIR=$1 
+    DOWNLOAD_DIR=$1
     shift 1
     FILES_URL=$@
 
@@ -74,13 +74,14 @@ List of available commands:
     default
     --update
     --upgrade
-    --base 
+    --base
     --fonts
     --alacritty
     --neovim
     --qtile
     --picom
     --xmonad
+    --rofi
 EOF
 exit 1
 fi
@@ -95,6 +96,7 @@ install_neovim=false
 install_picom=false
 install_qtile=false
 install_xmonad=false
+install_rofi=false
 
 if is_in_list "default" $@; then # default installation
     get_updates=true
@@ -136,6 +138,7 @@ fi
 
 if is_in_list "--qtile" $@; then # qtile
     install_picom=true
+    install_rofi=true
     install_qtile=true
 fi
 
@@ -144,13 +147,17 @@ if is_in_list "--xmonad" $@; then # xmonad
     install_xmonad=true
 fi
 
+if is_in_list "--rofi" $@; then # xmonad
+    install_rofi=true
+fi
+
 ## --- Installs -----------------------------------------------------------------------------------
 if $get_updates; then # updates
     info "Getting apt updates"
     sudo apt update -y
 fi
 
-if $install_upgrades; then 
+if $install_upgrades; then
     info "Upgrading packages"
     sudo apt upgrade -y
 fi
@@ -160,7 +167,7 @@ if $install_base_packages; then # base packages
     sudo apt install -y \
         curl grep ripgrep git python3 fuse g++ meson ninja-build python3-pip \
         build-essential libssl-dev libffi-dev python3-dev python3-venv \
-        python-is-python3 autoconf libtool pkg-config npm 
+        python-is-python3 autoconf libtool pkg-config npm
     mkdir -p ~/.local/bin
     echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.bashrc >> $HOME/.bashrc
 fi
@@ -174,13 +181,13 @@ if $install_fonts; then # fonts
     pushd $FONTSDIR
     info "Downloading nerd-fonts"
     echo "Installing RobotMono"
-    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/RobotoMono.zip 
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/RobotoMono.zip
     echo "Installing Mononoki"
-    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Mononoki.zip 
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Mononoki.zip
     echo "Installing JetBrains Mono"
-    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/JetBrainsMono.zip 
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/JetBrainsMono.zip
     echo "Installing FiraCode"
-    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/FiraCode.zip 
+    curl -LOs https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/FiraCode.zip
     unzip -n "*.zip"
     rm *.zip
     fc-cache -f -v
@@ -197,7 +204,7 @@ if $install_alacritty; then # alacritty
     if is_git_repo $PACK_DIR/alacritty; then
         cd $PACK_DIR/alacritty
         git pull
-    else 
+    else
         cd $PACK_DIR
         git clone https://github.com/jwilm/alacritty.git
         cd alacritty
@@ -216,7 +223,7 @@ if $install_neovim; then
     info "Installing neovim"
     pushd ~/.local/bin
     echo "Downloading neovim..."
-    curl -LOs https://github.com/neovim/neovim/releases/v3.0.1/download/nvim.appimage 
+    curl -LOs https://github.com/neovim/neovim/releases/v3.0.1/download/nvim.appimage
     info "Install packer from git"
     PACKER_DIR=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
     if is_git_repo $PACKER_DIR; then
@@ -226,28 +233,30 @@ if $install_neovim; then
 	git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_DIR
     fi
     chmod u+x nvim.appimage
-    mv $HOME/.local/bin/nvim.appimage $HOME/.local/bin/nvim 
+    mv $HOME/.local/bin/nvim.appimage $HOME/.local/bin/nvim
     chmod u+x $HOME/.local/bin/nvim
     popd
 fi
 
 if $install_picom; then
-    info "Installing picom dependencies (for qtile)"
+    info "Installing picom dependencies"
     sudo apt install -y \
         libxext-dev libxcb1-dev libxcb-damage0-dev libxcb-xfixes0-dev libxcb-shape0-dev \
         libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-composite0-dev \
         libxcb-image0-dev libxcb-present-dev libxcb-xinerama0-dev libxcb-glx0-dev libpixman-1-dev \
         libdbus-1-dev libconfig-dev libgl1-mesa-dev  libpcre2-dev  libevdev-dev uthash-dev \
         libev-dev libx11-xcb-dev libpcre++-dev
-    info "Installing picom (for qtile)"
+    info "Installing picom"
     orig_dir=$(pwd)
     if is_git_repo $PACK_DIR/picom; then
         cd $PACK_DIR/picom
         git pull
-    else 
+    else
         cd $PACK_DIR
-        # git clone https://github.com/jonaburg/picom
-        git clone https://github.com/pijulius/picom
+        # forks
+        # git clone https://github.com/dccsillag/picom
+        git clone https://github.com/jonaburg/picom
+        # git clone https://github.com/pijulius/picom
         cd picom
     fi
     meson --buildtype=release . build
@@ -259,12 +268,12 @@ fi
 if $install_qtile; then
     info "Installing qtile from pip"
     pip3 install xcffib
-    pip3 install qtile
+    pip3 install qtile psutil
     info "Creating qtile.xsession file"
     sudo cat > /usr/share/xsessions/qtile.xsession << EOF
 [Desktop Entry]
-Name=Qtile 
-Comment=Qtile Session 
+Name=Qtile
+Comment=Qtile Session
 Exec=qtile start
 Type=Application
 Type=wm;tiling
@@ -283,8 +292,28 @@ if $install_xmonad; then
     mkdir -p $HOME/.config/xmonad
     pushd $HOME/.config/xmonad
     git clone https://github.com/xmonad/xmonad
-    git clone https://github.com/xmonad/xmonad-contrib 
+    git clone https://github.com/xmonad/xmonad-contrib
     stack init
     stack install
     popd
 fi
+
+if $install_rofi; then # rofy
+    info "Installing rofi package"
+    sudo apt install -y rofi
+    orig_dir=$(pwd)
+    info "Installing rofi theme collection"
+    if is_git_repo $PACK_DIR/rofi; then
+        cd $PACK_DIR/rofi
+        git pull
+    else
+        cd $PACK_DIR
+        git clone --depth=1 https://github.com/adi1090x/rofi.git
+        cd rofi
+    fi
+    pushd $PACK_DIR/rofi
+    chmod +x setup.sh
+    ./setup.sh
+    popd
+fi
+
