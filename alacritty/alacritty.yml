@@ -3,7 +3,7 @@ env:
 
 font:
   normal:
-    family: JetBrainsMono Nerd Font
+    family: FiraCode Nerd Font
     style: Regular
 
 window:
@@ -12,8 +12,8 @@ window:
   decorations_theme_variant: None
 
   padding:
-    x: 3 
-    y: 3 
+    x: 3
+    y: 3
 
 import:
-  - ~/.config/alacritty/catppuccin/catppuccin-macchiato.yml
+  - ~/.config/alacritty/catppuccin/catppuccin-frappe.yml

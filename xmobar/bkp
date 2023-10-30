@@ -1,0 +1,33 @@
+Config { font = "xft:JetBrains Mono:pixelsize=14"
+       , additionalFonts = []
+       , borderColor = "white"
+       , border = NoBorder
+       , bgColor = "#24273a"
+       , fgColor = "#cad3f5"
+       , alpha = 255
+       , position = Top
+       , textOffset = -1
+       , iconOffset = -1
+       , lowerOnStart = True
+       , pickBroadest = False
+       , persistent = False
+       , hideOnStart = False
+       , iconRoot = "."
+       , allDesktops = True
+       , overrideRedirect = True
+       , commands = [ Run Network "wlo1" ["-L","0","-H","32",
+                                          "--normal","green","--high","red"] 10
+                    , Run Cpu ["-L","10","-H","70",
+                               "--normal","green","--high","red"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , R70 Battery ["-t", "<acstatus>: <left>% - <timeleft>"] 200
+                    , Run Swap [] 10
+                    , Run Com "uname" ["-s","-r"] "" 36000
+                    , Run Date "%a %b %_d %Y %H:%M" "date" 100
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%cpu% | %memory% | %battery% } %StdinReader%
+                    { %date%"
+       }

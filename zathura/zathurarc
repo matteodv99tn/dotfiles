@@ -2,3 +2,5 @@ include catppuccin-macchiato
 set recolor
 
 set selection-clipboard clipboard
+
+map <C-+> zoom

@@ -255,8 +255,8 @@ if $install_picom; then
         cd $PACK_DIR
         # forks
         # git clone https://github.com/dccsillag/picom
-        git clone https://github.com/jonaburg/picom
-        # git clone https://github.com/pijulius/picom
+        # git clone https://github.com/jonaburg/picom
+        git clone https://github.com/pijulius/picom
         cd picom
     fi
     meson --buildtype=release . build
