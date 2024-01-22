@@ -224,14 +224,14 @@ if $install_neovim; then
     pushd ~/.local/bin
     echo "Downloading neovim..."
     curl -LOs https://github.com/neovim/neovim/releases/v3.0.1/download/nvim.appimage
-    info "Install packer from git"
-    PACKER_DIR=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
-    if is_git_repo $PACKER_DIR; then
-	cd $PACKER_DIR
-	git pull
-    else
-	git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_DIR
-    fi
+    # info "Install packer from git"
+    # PACKER_DIR=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+    # if is_git_repo $PACKER_DIR; then
+	# cd $PACKER_DIR
+	# git pull
+    # else
+	# git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_DIR
+    # fi
     chmod u+x nvim.appimage
     mv $HOME/.local/bin/nvim.appimage $HOME/.local/bin/nvim
     chmod u+x $HOME/.local/bin/nvim
@@ -268,7 +268,8 @@ fi
 if $install_qtile; then
     info "Installing qtile from pip"
     pip3 install xcffib
-    pip3 install qtile psutil
+    pip3 install qtile psutil catppuccin
+    pip install https://github.com/elParaguayo/qtile-extras/releases/download/v0.23.0/qtile_extras-0.23.0-py3-none-any.whl
     info "Creating qtile.xsession file"
     sudo cat > /usr/share/xsessions/qtile.xsession << EOF
 [Desktop Entry]
@@ -301,19 +302,19 @@ fi
 if $install_rofi; then # rofy
     info "Installing rofi package"
     sudo apt install -y rofi
-    orig_dir=$(pwd)
-    info "Installing rofi theme collection"
-    if is_git_repo $PACK_DIR/rofi; then
-        cd $PACK_DIR/rofi
-        git pull
-    else
-        cd $PACK_DIR
-        git clone --depth=1 https://github.com/adi1090x/rofi.git
-        cd rofi
-    fi
-    pushd $PACK_DIR/rofi
-    chmod +x setup.sh
-    ./setup.sh
-    popd
+    # orig_dir=$(pwd)
+    # info "Installing rofi theme collection"
+    # if is_git_repo $PACK_DIR/rofi; then
+    #     cd $PACK_DIR/rofi
+    #     git pull
+    # else
+    #     cd $PACK_DIR
+    #     git clone --depth=1 https://github.com/adi1090x/rofi.git
+    #     cd rofi
+    # fi
+    # pushd $PACK_DIR/rofi
+    # chmod +x setup.sh
+    # ./setup.sh
+    # popd
 fi
 

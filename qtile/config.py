@@ -38,7 +38,7 @@ import os
 from libqtile import hook
 
 from catppuccin import Flavour
-my_flavour = Flavour.frappe()
+my_flavour = Flavour.mocha()
 
 N_MONITORS = int(subprocess.Popen(
         "xrandr --listmonitors | wc -l",
@@ -84,6 +84,7 @@ keys = [
     Key([mod, "control"],   "j",        lazy.layout.grow_down(),        desc="Grow window down"),
     Key([mod, "control"],   "k",        lazy.layout.grow_up(),          desc="Grow window up"),
     Key([mod],              "n",        lazy.layout.normalize(),        desc="Reset all window sizes"),
+    Key([mod],              "v",        lazy.window.toggle_floating(),  desc="Toggle floating of the window"),
     # Key(
     #     [mod, "shift"],
     #     "Return",
@@ -123,8 +124,8 @@ layouts = [
     layout.Columns(margin=8, **layout_defaults),
     # layout.MonadTall(margin=8, **layout_defaults),
     # layout.MonadTall(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=2, margin=8),
-    layout.Max(margin=[100, 300, 100, 300]),
-    layout.Max(margin=5),
+    layout.Max(margin=[100, 600, 100, 600]),
+    layout.Max(margin=8),
     # layout.Zoomy(columnwidth=600, margin=[30, 40, 30, 40]),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
