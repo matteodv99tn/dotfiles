@@ -221,6 +221,8 @@ fi
 
 if $install_neovim; then
     info "Installing neovim"
+    sudo apt install curl libfuse2 npm python3.10-venv
+    mkdir -p ~/.local/bin
     pushd ~/.local/bin
     echo "Downloading neovim..."
     curl -LOs https://github.com/neovim/neovim/releases/v3.0.1/download/nvim.appimage
