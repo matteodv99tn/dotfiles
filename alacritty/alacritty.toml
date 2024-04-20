@@ -11,6 +11,7 @@ style = "Regular"
 decorations_theme_variant = "None"
 dynamic_title = true
 opacity = 1
+decorations = "None"
 
 [window.padding]
 x = 3
