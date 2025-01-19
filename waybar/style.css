@@ -1,0 +1,178 @@
+@import "mocha.css";
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+    border: none;
+    border-radius: 0px;
+    font-size: 15px;
+}
+
+
+window#waybar {
+    background: shade(@base, 0.9);
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+#workspaces {
+    background: @surface0;
+    margin: 3px;
+    margin-left: 1rem;
+    padding: 0rem 0.7rem;
+    padding-left: 0.6rem;
+    padding-right: 0.3rem;
+    border-radius: 3rem;
+    border: 0px;
+    color: @textcolor1;
+}
+
+#workspaces button {
+    padding: 0px 0px;
+    margin: 0px 1px;
+    border: 0px;
+    color: @textcolor1;
+    transition: all 0.3s ease-in-out;
+}
+
+
+#workspaces button.active {
+    color: @lavender;
+}
+
+#workspaces button.empty {
+    color: @overlay0;
+}
+
+#workspaces button:hover {
+    color: @textcolor1;
+    background: @workspacesbackground2;
+    border-radius: 15px;
+    opacity:0.7;
+}
+
+
+/* -----------------------------------------------------
+ * Tooltips
+ * ----------------------------------------------------- */
+
+tooltip {
+    border-radius: 16px;
+    background-color: @backgroundlight;
+    opacity:0.9;
+    padding:20px;
+    margin:0px;
+}
+
+tooltip label {
+    color: @textcolor2;
+}
+
+#window {
+    color: @textcolor1;
+    margin-left: 0.6rem;
+    transition: all 0.3s ease-in-out;
+}
+
+#tray,
+#cpu,
+#memory,
+#battery,
+#backlight,
+#network,
+#pulseaudio,
+#bluetooth,
+#language,
+#custom-lock,
+#custom-exit,
+#clock {
+    background: @surface0;
+    color: @textcolor1;
+    padding: 0rem 0.7rem;
+    margin: 3px 0px;
+}
+
+
+/* Grouping rounding */
+#network,
+#custom-lock,
+#tray,
+#pulseaudio {
+    border-radius: 3rem 0 0 3rem;
+}
+
+#memory,
+#bluetooth,
+#custom-exit,
+#clock {
+    border-radius: 0 3rem 3rem 0;
+    margin-right: 1rem;
+}
+
+/* Colors */
+#memory,
+#clock {
+    color: @blue;
+}
+
+#backlight {
+    color: @flamingo;
+}
+
+#cpu,
+#battery {
+    color: @green;
+}
+
+#language,
+#pulseaudio {
+    color: @mauve;
+}
+
+#custom-appmenuicon {
+    color: @lavender;
+    font-size: 18px;
+    margin-left: 1rem;
+}
+
+#custom-lock {
+    color: @mauve;
+}
+#custom-exit {
+    color: @red;
+    padding-right: 0.6rem;
+}
+
+#network {
+    color: @green;
+}
+#bluetooth.disabled {
+    color: @overlay0;
+}
+#bluetooth.connected {
+    color: @blue;
+}
+
+#bluetooth {
+    color: @subtext0;
+    padding-right: 0.3rem;
+}
+
+#custom-wallpaper {
+    margin-left: 0.5rem;
+    color: @mauve;
+}
+
+#custom-screenshot {
+    margin-left: 0.5rem;
+    color: @yellow;
+}
+
+#custom-password {
+    margin-left: 0.5rem;
+    color: @teal;
+}
+
+#custom-terminal {
+    margin-left: 0.5rem;
+    color: @blue;
+}

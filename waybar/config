@@ -1,0 +1,33 @@
+{
+    "layer": "top",
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "spacing": 0,
+
+    "include": [    
+        "~/.config/waybar/modules.json"
+    ],
+
+    "modules-left": [
+        "group/applets",
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+
+    "modules-right": [
+        "tray",
+        "hyprland/language",
+        "cpu",
+        "memory",
+        "pulseaudio",
+        "battery",
+        "backlight",
+        "clock",
+        "network",
+        "bluetooth",
+        "custom/lock",
+        "custom/exit"
+    ]
+}
