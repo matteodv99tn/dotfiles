@@ -1,11 +1,13 @@
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
+alias .....='cd ../../../..'
 
 export PATH=$HOME/.local/bin:$PATH
 # . "$HOME/.cargo/env"
 
 eval "$(starship init bash)"
+fastfetch --config examples/13
 
 function cd() {
   builtin cd "$@"
@@ -25,8 +27,6 @@ function cd() {
       fi
   fi
 }
-alias bton="sudo service bluetooth start"
-alias btoff="sudo service bluetooth stop"
 
 # https://www.reddit.com/r/ROS/comments/15yr1zm/ros_c_coding_setup/
 # export CC=clang
